@@ -1,163 +1,204 @@
-# 👁️ NX-TRACE
+# 👁️ NX-TRACE — Network Endpoint Security Scanner
 
-> **NX-TRACE** is a simple network endpoint scanner written in Python.
-> It was developed as a **learning project** focused on understanding how REST APIs respond to unauthenticated requests and how basic security indicators can be identified.
+> A small Python tool created for learning and practicing basic REST API security analysis in a controlled environment.
 
-> This tool scans local endpoints and reports response status, response time, payload size and basic signs of authentication requirements.
+NX-TRACE is a **student project** focused on understanding how REST endpoints behave under different conditions, such as authentication requirements, slow responses, and missing routes.
 
-> ⚠️ This project is intended for **educational and defensive purposes only**.
-
----
-
-## ✨ Features
-
-What NX-TRACE currently does:
-
-* Reads a list of endpoints from a text file
-* Sends HTTP GET requests to each endpoint
-* Measures response time
-* Displays HTTP status codes with visual indicators
-* Detects **possible authentication requirements** using:
-
-  * Status codes (401 / 403)
-  * `WWW-Authenticate` headers
-  * Common authentication-related keywords in responses
-* Prints colored terminal output
-* Generates a simple scan report (`report.txt`)
-
-This is a **basic scanner**, not a full vulnerability assessment tool.
+The scanner is designed to run **locally** against a **test server included in the project**, allowing safe and ethical experimentation.
 
 ---
 
-## 📂 Project Structure
+## 📌 Project Goal
 
-```
-nx-trace/
-├── scanner.py
-├── endpoints.txt
-├── report.txt
-└── README.md
-```
+The main goal of NX-TRACE is educational.
+
+This project helped me practice:
+- HTTP requests and status codes
+- Basic security analysis concepts
+- Detecting authentication-protected endpoints
+- Measuring response times
+- CLI output formatting
+- Writing structured scan reports
+
+It is **not** intended to replace professional security scanners.
 
 ---
 
-## 🛠️ Requirements
+## 🧪 How the Project Works
 
-* Python 3.8+
-* `requests` library
+NX-TRACE is composed of two parts:
 
-Install dependency:
+1. **A Flask test server**
+   - Simulates common API behaviors
+   - Runs locally on `http://localhost:8000`
+   - Provides predictable endpoints for analysis
+
+2. **The NX-TRACE scanner**
+   - Sends requests to the test server
+   - Analyzes responses
+   - Displays results in the terminal
+   - Generates a text report
+
+This approach ensures the scans are:
+- Safe
+- Reproducible
+- Fully authorized
+
+---
+
+## 🖥️ Test Server (Flask)
+
+The test server simulates different real-world API scenarios.
+
+### Available Endpoints
+
+| Endpoint     | Behavior                          |
+|--------------|-----------------------------------|
+| `/`          | Server status message              |
+| `/reservas` | 200 OK with JSON data              |
+| `/usuarios` | 401 Unauthorized                   |
+| `/admin`    | 403 Forbidden                      |
+| `/slow`     | Slow response (2 seconds delay)    |
+| `/notfound` | 404 Not Found                      |
+
+The server exists **only for testing the scanner**.
+
+---
+
+## 🚀 Running the Project
+
+### Requirements
+- Python 3.6+
+- pip
+
+### 1️⃣ Install dependencies
+```bash
+pip install flask requests
+
+### 2️⃣ Start the test server
 
 ```bash
-pip install requests
+python test_server.py
 ```
 
----
-
-## 🚀 Usage
-
-### 1. Start a local API server
-
-(default target is `http://localhost:8000`)
-
-### 2. Add endpoints to `endpoints.txt`, one per line
+The server will run at:
 
 ```
-/users
-/login
-/admin
-/api/data
+http://localhost:8000
 ```
 
-### 3. Run the scanner
+### 3️⃣ Run the scanner
 
 ```bash
 python scanner.py
 ```
 
-The tool will:
-
-* Clear the terminal
-* Display the NX-TRACE banner
-* Scan each endpoint
-* Print results and summary
-* Generate a `report.txt` file
+The scanner reads endpoints from `endpoints.txt` and automatically scans the local server.
 
 ---
 
-## 📊 Output Example
+## 📄 Endpoints File
 
-* ✅ `200` responses shown in green
-* 🔒 `401 / 403` responses highlighted as protected
-* ⚠️ Other status codes flagged
-* Authentication hints displayed when detected
+The scanner uses a simple text file:
 
-A summary and a detailed table are printed at the end of the scan.
+```txt
+/reservas
+/usuarios
+/admin
+/slow
+/notfound
+```
+
+Each line represents an endpoint to be tested.
 
 ---
 
-## 📄 Report File
+## 🔍 What NX-TRACE Analyzes
 
-After the scan, NX-TRACE generates `report.txt` containing:
+For each endpoint, the scanner collects:
 
-* Scan date and target URL
-* Number of endpoints scanned
-* Success and failure count
-* Average response time
-* Per-endpoint details:
+* HTTP status code
+* Response time
+* Response size
+* Possible authentication requirement
 
-  * Status code
-  * Response time
-  * Content size
-  * Authentication detection
+Authentication is detected by:
 
-This report is meant for **manual review and learning**, not automated compliance.
+* Status codes `401` and `403`
+* `WWW-Authenticate` headers
+* Common authentication keywords in the response body
+
+---
+
+## 📊 Output
+
+### Terminal Output
+
+* Colored status indicators
+* Response times
+* Authentication flags
+* Summary statistics
+
+### Report File
+
+After the scan, a file named `report.txt` is generated containing:
+
+* Scan date and target
+* Per-endpoint results
+* Errors (if any)
+* Basic statistics
 
 ---
 
 ## ⚠️ Limitations
 
-This project **does not** currently include:
+This project intentionally keeps things simple:
 
-* Authentication bypass attempts
-* POST, PUT or DELETE requests
-* Token handling
-* Async or concurrent scanning
-* Vulnerability exploitation
-* Deep payload analysis
+* No concurrency
+* No authentication bypass attempts
+* No vulnerability exploitation
+* No external targets
+* No HTTPS or certificate analysis
 
-Authentication detection is **heuristic-based** and may produce false positives.
-
----
-
-## 🎓 Learning Goals
-
-This project was created to practice:
-
-* HTTP request handling
-* Basic API security concepts
-* Terminal UI formatting
-* Error handling
-* Writing readable security-related code
-* Producing clear scan reports
+It focuses on **understanding behavior**, not attacking systems.
 
 ---
 
 ## 🛡️ Ethical Use
 
-* Scan **only systems you own or have permission to test**
-* Do not use this tool for unauthorized access
-* This project is educational and defensive in nature
+NX-TRACE is meant to be used **only** on:
+
+* The included test server
+* Systems you own
+* Systems you have explicit permission to test
+
+Never scan public or private systems without authorization.
 
 ---
 
-## 📜 License
+## 📚 What I Learned
 
-MIT License
+Through this project, I practiced:
+
+* Python scripting
+* REST API behavior analysis
+* CLI UX design
+* Security-focused thinking
+* Writing readable scan output
+* Structuring a small security tool
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
 
 ---
 
 ## 👤 Author
 
-Developed by **João**
-Cybersecurity & Development enthusiast
+Developed as a personal study project focused on cybersecurity fundamentals and defensive analysis.
+
+---
+
+> *“Security starts with visibility. Even simple tools can teach powerful lessons.”*

@@ -1,0 +1,5 @@
+/reservas
+/usuarios
+/admin
+/slow
+/notfound

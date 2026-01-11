@@ -197,12 +197,12 @@ This project is licensed under the MIT License.
 
 ## 👤 Author
 
-Developed by **João**
-Cybersecurity & Development enthusiast
+Developed by **João Pedro Soares**
 
 Developed as a personal study project focused on cybersecurity fundamentals and defensive analysis.
 
 ---
 
 > *“Security starts with visibility. Even simple tools can teach powerful lessons.”*
+
 

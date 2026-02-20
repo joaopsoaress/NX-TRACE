@@ -1,12 +1,13 @@
+from datetime import datetime
 import requests
 import time
 import sys
 import os
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://127.0.0.1:8000"
 HEADERS = {
     "Content-Type": "application/json",
-    "User-Agent": "NX-TRACE-Scanner/1.0"
+    "User-Agent": "NX-TRACE-Scanner/1.5"
 }
 
 def print_banner():
@@ -44,7 +45,7 @@ def print_banner():
 \033[94m║                                   ╚═╝  ╚═══╝╚═╝  ╚═╝                                                  ║\033[0m
 \033[94m║                                                                                                       ║\033[0m
 \033[94m║                                 👁️  N X - T R A C E  👁️                                                 ║\033[0m
-\033[94m║                               Network Security Scanner v1.0                                           ║\033[0m
+\033[94m║                               Network Security Scanner v1.5                                           ║\033[0m
 \033[94m║                                                                                                       ║\033[0m
 \033[94m╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝\033[0m
 """
@@ -96,6 +97,7 @@ def test_endpoint(endpoint):
         "response_time": None,
         "content_length": None,
         "auth_required": False,  # Default to False
+        "response_data": None,
         "error": None
     }
 
@@ -106,6 +108,12 @@ def test_endpoint(endpoint):
         result["status_code"] = response.status_code
         result["response_time"] = round(elapsed, 3)
         result["content_length"] = len(response.content)
+
+        if 'application/json' in response.headers.get('Content-Type', ''):
+            try:
+                result["response_data"] = response.json()
+            except:
+                result["response_data"] = {"error": "Failed to parse JSON"}
 
         auth_detected = False
         
@@ -180,8 +188,190 @@ def print_result_table(results):
 
     print("\033[97m" + "─" * 70 + "\033[0m")
 
+def discover_endpoints(base_url, wordlist=None, output_file="endpoints.txt"):
+    """
+    Args:
+        base_url: The base URL to scan
+        wordlist: Path to a wordlist file for brute-forcing endpoints
+        output_file: File to save discovered endpoints
+
+    Returns:
+        List of discovered endpoints
+
+    """
+
+    print_header("ENDPOINT DISCOVERY")
+    print_info("Inicianting endpoint discovery...")
+
+    # Default wordlist if none provided
+    if not wordlist:
+        wordlist = [
+            "admin", "dashboard", "manager", "management",
+            "api", "v1", "v2", "v3", "rest", "graphql",
+            "login", "logout", "register", "auth",
+            "users", "user", "accounts", "profile",
+            "products", "orders", "payments", "cart",
+            "health", "status", "ping", "metrics",
+            "docs", "swagger", "openapi", "redoc",
+            "backup", "temp", "logs", "config",
+            ".env", ".git", "test", "dev",
+            "public", "private", "internal",
+            "webhook", "callback", "hooks",
+            "db", "database", "search", "query",
+            "reports", "export", "import", "download"
+        ]
+    
+    discovered = []
+    discovered_only = []
+
+    print(f"\n Testing {len(wordlist)} words...")
+    print("(This can take a while)\n")
+
+    for i, word in enumerate(wordlist, 1):
+        # Create endpoint variations
+        variations = [
+            f"/{word}",
+            f"/api/{word}",
+            f"/rest/{word}",
+            f"/v1/{word}",
+            f"/{word}/v1",
+            f"/{word}/api"
+        ]
+
+        # Visual progress
+        progress = f"[{i}/{len(wordlist)}]"
+        print(f"\r{progress} Testing: {word:<20}", end="", flush=True)
+
+        for endpoint in variations:
+            url = f"{base_url}{endpoint}"
+
+            try:
+                # Short timeout to not lag
+                response = requests.get(url, timeout=2, allow_redirects=False)
+
+                # If it isn't 404, considers found
+                if response.status_code != 404:
+                    discovered.append({
+                        "endpoint": endpoint,
+                        "status": response.status_code,
+                        "content_type": response.headers.get('Content-Type', 'unknown')
+                    })
+
+                    discovered_only.append(endpoint)
+
+                    # Immediatly shows when found
+                    status_color = "\033[92m" if response.status_code == 200 else "\033[93m"
+                    print(f"\n  ✅ Encontrado: {endpoint:<30} {status_color}[{response.status_code}]\033[0m")
+            
+            except requests.exceptions.Timeout:
+                # Timeout is expected, just ignore it
+                pass
+            except requests.exceptions.ConnectionError:
+                # If it doesn't connect, everything stops
+                print_error(f"\nFalha de conexão com {base_url}")
+                return[], []
+            except:
+                # Ignore other errors
+                pass
+
+    print("\n")
+
+    # Discovery's Statistics
+    if discovered:
+        print_success(f"Discovered {len(discovered)} new endpoints!")
+
+        # Shows summary by status code
+        status_count = {}
+        for d in discovered:
+            status_count[d['status']] = status_count.get(d['status'], 0) + 1
+        
+        print_info("Summary by status:")
+        for status, count in sorted(status_count.items()):
+            color = "\033[92m" if status == 200 else "\033[93m" if status < 400 else "\033[91m"
+            print(f"  {color}{status}\033[0m: {count} endpoints")
+    else:
+        print_warning("No new endpoints found :(")
+
+    return discovered, discovered_only
+
+def update_endpoints_file(discovered_endpoints, original_file="endpoints.txt"):
+    """
+    Update the endpoint file with the newly discovered endpoints 
+
+    Args:
+        discovered_endpoints: Discovered endpoints list
+        original_file; Original endpoints file
+
+    Returns:
+        Full list of endpoints (old + new)
+    """
+
+    print_header("UPDATING ENDPOINTS FILE") 
+
+    # Loads existing endpoints
+    existing_endpoints = []
+    try:
+        with open(original_file, "r") as f:
+            existing_endpoints = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+        print_info(f"Existing endpoints: {len(existing_endpoints)}")
+    except FileNotFoundError:
+        print_warning("endpoints.txt not found. Creating new file...")
+        existing_endpoints = []
+
+    # Extract only the endpoints from the discovered results.
+    new_endpoints = discovered_endpoints
+
+    # Combine and remove duplicates (while preserving order)
+    all_endpoints = []
+    seen = set()
+
+    # Adds existing ones
+    for ep in existing_endpoints:
+        if ep not in seen:
+            all_endpoints.append(ep)
+            seen.add(ep)
+            
+    # Adds new ones
+    new_count = 0
+    for ep in new_endpoints:
+        if ep not in seen:
+            all_endpoints.append(ep)
+            seen.add(ep)
+            new_count += 1
+
+    # Creates a backup for the original file
+    if os.path.exists(original_file):
+        backup_name = f"endpoints_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        os.rename(original_file, backup_name)
+        print_info(f"Backup criado: {backup_name}")
+
+    # Writes new file
+    with open(original_file, "w") as f:
+        # Explanatory header
+        f.write("# NX-TRACE Endpoints File\n")
+        f.write(f"# Updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write("# " + "="*50 + "\n\n")
+        
+        f.write("# ========== ENDPOINTS FOUND ==========\n\n")
+
+        for endpoint in sorted(all_endpoints): # Sorts alphabetically
+            f.write(f"{endpoint}\n")
+
+    print_success(f"{original_file} file updated!")
+    print_info(f"Total endpoints: {len(all_endpoints)}")
+    print_info(f"   |- Existing: {len(existing_endpoints)}")
+    print_info(f"   L- New added: {new_count}")
+
+    if new_count > 0:
+        print_info("New endpoints added: ")
+        for ep in new_endpoints:
+            if ep not in existing_endpoints:
+                print(f"   + {ep}")
+
+    return all_endpoints
+
 def main():
-    #Clear screen and print banner
+    # Clear screen and print banner
     if os.name == 'posix': #Linux/Mac
         os.system('clear')
     elif os.name == 'nt':  #Windows
@@ -191,8 +381,27 @@ def main():
 
     print_info(f"TARGET: {BASE_URL}")
 
-    endpoints = load_endpoints()
-    print_success(f"Loaded {len(endpoints)} endpoints from endpoints.txt")
+    endpoints = []
+
+    # Ask if they want to enable automatic discovery
+    print_header("DISCOVERY_OPTION")
+    answer = input("\033[93m?Enable automatic endpoint discovery? (y/n): \033[0m")
+    
+    if answer.lower() == 'y':
+        discovered, discovered_only = discover_endpoints(BASE_URL)
+        
+        if discovered:
+            endpoints = update_endpoints_file(discovered_only)
+            print_info(f"Discovered {len(discovered_only)} new endpoints")
+        else:
+            print_warning("No endpoints discovered. Using original file...")
+            endpoints = load_endpoints()
+    else:
+        # Use original file
+        endpoints = load_endpoints()
+    
+
+    print_success(f"Loaded {len(endpoints)} to scan")
     
     print_header("STARTING SCAN")
     
@@ -259,10 +468,10 @@ def main():
         auth_required = len([r for r in successful_results if r['auth_required']])
         print_info(f"Endpoints requiring auth: {auth_required}/{len(successful_results)}")
 
-    #Print result table
+    # Print result table
     print_result_table(results)
 
-    #Generate report
+    # Generate report
     print_header("GENERATING REPORT")
 
     try:
@@ -283,8 +492,7 @@ def main():
             
             report.write("\n" + "-" * 70 + "\n\n")
 
-
-        for r in results:
+            for r in results:
                 report.write(f"ENDPOINT: {r['endpoint']}\n")
                 if r["error"]:
                     report.write(f"  Status: ERROR\n")
@@ -294,6 +502,12 @@ def main():
                     report.write(f"  Response Time: {r['response_time']} seconds\n")
                     report.write(f"  Content Length: {r['content_length']} bytes\n")
                     report.write(f"  Authentication Required: {'YES' if r['auth_required'] else 'NO'}\n")
+                
+                if r.get('response_data'):
+                    report.write(f"  Response Data:\n")
+                    if isinstance(r['response_data'], dict):
+                        for key, value in r['response_data'].items():
+                            report.write(f"    {key}: {value}\n")
                 report.write("-" * 40 + "\n")
 
         print_success("Report saved to report.txt")

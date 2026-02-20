@@ -3,23 +3,38 @@ import time
 
 app = Flask(__name__)
 
+# Exemple data
+programming_info = {
+    "languages": [
+        {"name": "Python", "paradigm": "Multiparadigm", "usage": "AI, Web, Data Science"},
+        {"name": "JavaScript", "paradigm": "Functional/Event-driven", "usage": "Web (Front/Back)"},
+        {"name": "SQL", "paradigm": "Declarative", "use": "Database"}
+    ],
+    "python_version": "3.12"
+}
+
 @app.route('/')
 def home():
     return jsonify({"message": "Test server running"})
 
-@app.route('/reservas')
+# Endpoint to provide programming information for testing purposes
+@app.route('/api/test', methods=['GET'])
+def get_info():
+    return jsonify(programming_info)
+
+@app.route('/reservations')
 def reservas():
     # Simulate some processing time
     time.sleep(0.1)
     return jsonify({
         "data": [
-            {"id": 1, "name": "Reserva 1"},
-            {"id": 2, "name": "Reserva 2"}
+            {"id": 1, "name": "Reservation 1"},
+            {"id": 2, "name": "Reservation 2"}
         ],
         "count": 2
     })
 
-@app.route('/usuarios')
+@app.route('/users')
 def usuarios():
     # Return 401 Unauthorized to test auth detection
     return jsonify({"error": "Authentication required"}), 401
@@ -43,8 +58,8 @@ def not_found():
 if __name__ == '__main__':
     print("Starting test server on http://localhost:8000")
     print("Available endpoints:")
-    print("  /reservas - Returns 200 OK with data")
-    print("  /usuarios - Returns 401 Unauthorized")
+    print("  /reservations - Returns 200 OK with data")
+    print("  /users - Returns 401 Unauthorized")
     print("  /admin    - Returns 403 Forbidden")
     print("  /slow     - Slow response (2 seconds)")
     print("  /notfound - Returns 404 Not Found")

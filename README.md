@@ -260,6 +260,12 @@ This is a personal learning project, but feel free to fork and experiment! Some 
 
 ---
 
+## 📜 License
+
+This project is licensed under the MIT License with an Ethical Use Addendum - see the [LICENSE](LICENSE) file for details.
+
+---
+
 ## 📝 Changelog
 
 ### v1.5
@@ -273,4 +279,5 @@ This is a personal learning project, but feel free to fork and experiment! Some 
 - Initial release
 - Basic endpoint scanning
 - Simple report generation
+
 - Authentication detection

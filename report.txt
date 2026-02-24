@@ -1,1 +1,249 @@
+======================================================================
+                     NX-TRACE SCAN REPORT
+======================================================================
 
+Scan Date: 2026-02-24 19:15:54
+Target URL: http://127.0.0.1:8000
+Endpoints Scanned: 37
+Successful: 37
+Failed: 0
+Average Response Time: 0.073 seconds
+
+----------------------------------------------------------------------
+
+ENDPOINT: /.
+  Status Code: 200
+  Response Time: 0.007 seconds
+  Content Length: 39 bytes
+  Authentication Required: NO
+  Response Data:
+    message: Test server running
+----------------------------------------
+ENDPOINT: /.env
+  Status Code: 404
+  Response Time: 0.034 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /.git
+  Status Code: 404
+  Response Time: 0.008 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /admin
+  Status Code: 403
+  Response Time: 0.018 seconds
+  Content Length: 39 bytes
+  Authentication Required: YES
+  Response Data:
+    error: Admin access required
+----------------------------------------
+ENDPOINT: /admin/dashboard
+  Status Code: 404
+  Response Time: 0.007 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /admin/logs
+  Status Code: 404
+  Response Time: 0.008 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /admin/settings
+  Status Code: 404
+  Response Time: 0.031 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /admin/users
+  Status Code: 404
+  Response Time: 0.03 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /api/test
+  Status Code: 200
+  Response Time: 0.03 seconds
+  Content Length: 374 bytes
+  Authentication Required: NO
+  Response Data:
+    languages: [{'name': 'Python', 'paradigm': 'Multiparadigm', 'usage': 'AI, Web, Data Science'}, {'name': 'JavaScript', 'paradigm': 'Functional/Event-driven', 'usage': 'Web (Front/Back)'}, {'name': 'SQL', 'paradigm': 'Declarative', 'use': 'Database'}]
+    python_version: 3.12
+----------------------------------------
+ENDPOINT: /api/v1/orders
+  Status Code: 404
+  Response Time: 0.009 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /api/v1/products
+  Status Code: 404
+  Response Time: 0.007 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /api/v1/users
+  Status Code: 404
+  Response Time: 0.011 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /api/v2/users
+  Status Code: 404
+  Response Time: 0.007 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /auth/basic
+  Status Code: 404
+  Response Time: 0.037 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /auth/jwt
+  Status Code: 404
+  Response Time: 0.009 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /backup
+  Status Code: 404
+  Response Time: 0.011 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /config
+  Status Code: 404
+  Response Time: 0.019 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /debug
+  Status Code: 404
+  Response Time: 0.015 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /dev
+  Status Code: 404
+  Response Time: 0.021 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /error
+  Status Code: 404
+  Response Time: 0.014 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /forgot-password
+  Status Code: 404
+  Response Time: 0.026 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /login
+  Status Code: 404
+  Response Time: 0.009 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /logout
+  Status Code: 404
+  Response Time: 0.013 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /logs
+  Status Code: 404
+  Response Time: 0.022 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /notfound
+  Status Code: 404
+  Response Time: 0.012 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /products
+  Status Code: 404
+  Response Time: 0.01 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /public
+  Status Code: 404
+  Response Time: 0.011 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /register
+  Status Code: 404
+  Response Time: 0.027 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /reservations
+  Status Code: 200
+  Response Time: 0.111 seconds
+  Content Length: 149 bytes
+  Authentication Required: NO
+  Response Data:
+    count: 2
+    data: [{'id': 1, 'name': 'Reservation 1'}, {'id': 2, 'name': 'Reservation 2'}]
+----------------------------------------
+ENDPOINT: /reset-password
+  Status Code: 404
+  Response Time: 0.03 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /slow
+  Status Code: 200
+  Response Time: 2.009 seconds
+  Content Length: 33 bytes
+  Authentication Required: NO
+  Response Data:
+    message: Slow response
+----------------------------------------
+ENDPOINT: /staging
+  Status Code: 404
+  Response Time: 0.02 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /temp
+  Status Code: 404
+  Response Time: 0.016 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /test
+  Status Code: 404
+  Response Time: 0.017 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /timeout
+  Status Code: 404
+  Response Time: 0.008 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /tmp
+  Status Code: 404
+  Response Time: 0.005 seconds
+  Content Length: 207 bytes
+  Authentication Required: NO
+----------------------------------------
+ENDPOINT: /users
+  Status Code: 401
+  Response Time: 0.008 seconds
+  Content Length: 41 bytes
+  Authentication Required: YES
+  Response Data:
+    error: Authentication required
+----------------------------------------

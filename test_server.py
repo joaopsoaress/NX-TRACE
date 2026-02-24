@@ -23,7 +23,7 @@ def get_info():
     return jsonify(programming_info)
 
 @app.route('/reservations')
-def reservas():
+def reservations():
     # Simulate some processing time
     time.sleep(0.1)
     return jsonify({
@@ -35,7 +35,7 @@ def reservas():
     })
 
 @app.route('/users')
-def usuarios():
+def users():
     # Return 401 Unauthorized to test auth detection
     return jsonify({"error": "Authentication required"}), 401
 

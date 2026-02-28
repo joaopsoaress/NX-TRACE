@@ -215,7 +215,7 @@ Planned improvements may include:
 
 ### v1.6
 
-Added CLI-based target configuration
+* Added CLI-based target configuration
 
 ### v1.5
 
@@ -229,3 +229,4 @@ Added CLI-based target configuration
 * Initial release
 * Basic endpoint scanning
 * Authentication signal detection
+

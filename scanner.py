@@ -7,7 +7,7 @@ import os
 BASE_URL = "http://127.0.0.1:8000"
 HEADERS = {
     "Content-Type": "application/json",
-    "User-Agent": "NX-TRACE-Scanner/1.5"
+    "User-Agent": "NX-TRACE-Scanner/1.6"
 }
 
 def print_banner():
@@ -45,7 +45,7 @@ def print_banner():
 \033[94m║                                   ╚═╝  ╚═══╝╚═╝  ╚═╝                                                  ║\033[0m
 \033[94m║                                                                                                       ║\033[0m
 \033[94m║                                 👁️  N X - T R A C E  👁️                                                 ║\033[0m
-\033[94m║                               Network Security Scanner v1.5                                           ║\033[0m
+\033[94m║                               Network Security Scanner v1.6                                           ║\033[0m
 \033[94m║                                                                                                       ║\033[0m
 \033[94m╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝\033[0m
 """
@@ -86,9 +86,9 @@ def load_endpoints():
         print_error("endpoints.txt not found!")
         sys.exit(1)
     
-def test_endpoint(endpoint):
+def test_endpoint(target, endpoint):
     """Test a single endpoint"""
-    url = f"{BASE_URL}{endpoint}"
+    url = f"{target}{endpoint}"
     start = time.time()
 
     result = {
@@ -188,10 +188,10 @@ def print_result_table(results):
 
     print("\033[97m" + "─" * 70 + "\033[0m")
 
-def discover_endpoints(base_url, wordlist=None, output_file="endpoints.txt"):
+def discover_endpoints(target, wordlist=None, output_file="endpoints.txt"):
     """
     Args:
-        base_url: The base URL to scan
+        target: URL to scan
         wordlist: Path to a wordlist file for brute-forcing endpoints
         output_file: File to save discovered endpoints
 
@@ -243,7 +243,7 @@ def discover_endpoints(base_url, wordlist=None, output_file="endpoints.txt"):
         print(f"\r{progress} Testing: {word:<20}", end="", flush=True)
 
         for endpoint in variations:
-            url = f"{base_url}{endpoint}"
+            url = f"{target}{endpoint}"
 
             try:
                 # Short timeout to not lag
@@ -268,7 +268,7 @@ def discover_endpoints(base_url, wordlist=None, output_file="endpoints.txt"):
                 pass
             except requests.exceptions.ConnectionError:
                 # If it doesn't connect, everything stops
-                print_error(f"\nFalha de conexão com {base_url}")
+                print_error(f"\nFalha de conexão com {target}")
                 return[], []
             except:
                 # Ignore other errors
@@ -379,7 +379,11 @@ def main():
 
     print_banner()
 
-    print_info(f"TARGET: {BASE_URL}")
+    target = input("\033[93m?Enter target URL or IP: \033[0m").strip()
+    if target == "":
+        target = BASE_URL
+    
+    print_info(f"TARGET: {target}")
 
     endpoints = []
 
@@ -388,7 +392,7 @@ def main():
     answer = input("\033[93m?Enable automatic endpoint discovery? (y/n): \033[0m")
     
     if answer.lower() == 'y':
-        discovered, discovered_only = discover_endpoints(BASE_URL)
+        discovered, discovered_only = discover_endpoints(target)
         
         if discovered:
             endpoints = update_endpoints_file(discovered_only)
@@ -417,7 +421,7 @@ def main():
         print(f"\r\033[94m{animation[i % len(animation)]} Scanning {ep}...\033[0m", end="", flush=True)
 
 
-        result = test_endpoint(ep)
+        result = test_endpoint(target, ep)
         results.append(result)
 
         if result["error"]:
@@ -481,7 +485,7 @@ def main():
             report.write("=" * 70 + "\n\n")
             
             report.write(f"Scan Date: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
-            report.write(f"Target URL: {BASE_URL}\n")
+            report.write(f"Target URL: {target}\n")
             report.write(f"Endpoints Scanned: {len(endpoints)}\n")
             report.write(f"Successful: {successful}\n")
             report.write(f"Failed: {failed}\n")

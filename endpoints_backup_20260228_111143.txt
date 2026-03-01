@@ -1,0 +1,47 @@
+# NX-TRACE Endpoints File
+# Updated: 2026-02-28 11:08:42
+# ==================================================
+
+# ========== ENDPOINTS FOUND ==========
+
+/.
+/.env
+/.git
+/admin
+/admin/dashboard
+/admin/logs
+/admin/settings
+/admin/users
+/api/test
+/api/v1/orders
+/api/v1/products
+/api/v1/users
+/api/v2/users
+/auth/basic
+/auth/jwt
+/backup
+/config
+/debug
+/dev
+/docs
+/error
+/forgot-password
+/health
+/login
+/logout
+/logs
+/notfound
+/products
+/public
+/redoc
+/register
+/reservations
+/reset-password
+/slots
+/slow
+/staging
+/temp
+/test
+/timeout
+/tmp
+/users

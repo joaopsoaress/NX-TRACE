@@ -1,9 +1,0 @@
-README.md
-pyproject.toml
-nx_trace/scanner.py
-nx_trace.egg-info/PKG-INFO
-nx_trace.egg-info/SOURCES.txt
-nx_trace.egg-info/dependency_links.txt
-nx_trace.egg-info/entry_points.txt
-nx_trace.egg-info/requires.txt
-nx_trace.egg-info/top_level.txt

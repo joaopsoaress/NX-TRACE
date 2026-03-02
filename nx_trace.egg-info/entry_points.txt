@@ -1,2 +1,0 @@
-[console_scripts]
-nx-trace = nx_trace.scanner:main

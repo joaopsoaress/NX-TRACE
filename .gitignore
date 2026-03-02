@@ -1,21 +1,61 @@
-# Python
+# =========================
+# Python bytecode / cache
+# =========================
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
 
-# Virtual environment
+# =========================
+# Packaging / build artifacts
+# =========================
+build/
+dist/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+
+# =========================
+# Virtual environments
+# =========================
 venv/
-.env/
+.venv/
+env/
+ENV/
 
-# Reports
+# =========================
+# Test / coverage
+# =========================
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.cache/
+
+# =========================
+# Output files (NX-TRACE)
+# =========================
 output/
 report.txt
-*.log
 
-# IDEs
+# =========================
+# IDE / Editor
+# =========================
 .vscode/
 .idea/
 
-# OS
+# =========================
+# OS-specific files
+# =========================
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# OneDrive temp locks
+# =========================
+~$*

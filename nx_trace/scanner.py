@@ -8,7 +8,7 @@ import os
 BASE_URL = "http://127.0.0.1:8000"
 HEADERS = {
     "Content-Type": "application/json",
-    "User-Agent": "NX-TRACE-Scanner/1.6"
+    "User-Agent": "NX-TRACE-Scanner/1.6.1"
 }
 
 def print_banner():
@@ -25,7 +25,7 @@ def print_banner():
 \033[94m║                                   ╚═╝  ╚═══╝╚═╝  ╚═╝                                                  ║\033[0m
 \033[94m║                                                                                                       ║\033[0m
 \033[94m║                                 👁️  N X - T R A C E  👁️                                               ║\033[0m
-\033[94m║                               Network Security Scanner v1.6                                           ║\033[0m
+\033[94m║                               Network Security Scanner v1.6.1                                         ║\033[0m
 \033[94m║                                                                                                       ║\033[0m
 \033[94m╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝\033[0m
 """

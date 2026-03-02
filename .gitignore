@@ -9,6 +9,7 @@ venv/
 .env/
 
 # Reports
+output/
 report.txt
 *.log
 

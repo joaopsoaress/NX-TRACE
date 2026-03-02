@@ -1,5 +1,7 @@
 import argparse
 from datetime import datetime
+from importlib import resources
+from pathlib import Path
 import requests
 import time
 import sys
@@ -57,16 +59,39 @@ def print_warning(text):
     print(f"\033[93m[!]\033[0m {text}")
 
 def load_endpoints():
-    """Load endpoints from file"""
-    try:
-        with open("endpoints.txt", "r") as file:
-            endpoints = [line.strip() for line in file if line.strip()]
-            return endpoints
-    except FileNotFoundError:
-        print_error("endpoints.txt not found!")
-        sys.exit(1)
+    """Load endpoints from file - checks multiple possible locations"""
     
-def test_endpoint(target, endpoint):
+    # Possible locations for endpoints.txt
+    possible_paths = [
+        "endpoints.txt",  # Current directory
+        os.path.join(os.path.dirname(__file__), "endpoints.txt"),  # Same directory as script
+        os.path.join(sys.prefix, "endpoints.txt"),  # Installation directory
+    ]
+    
+    # If running as installed package, try package directory
+    if hasattr(sys, 'real_prefix') or hasattr(sys, 'base_prefix'):
+        # Virtual environment
+        package_dir = os.path.join(sys.prefix, 'Lib', 'site-packages', 'nx_trace')
+        possible_paths.append(os.path.join(package_dir, "endpoints.txt"))
+    
+    for path in possible_paths:
+        try:
+            with open(path, "r") as file:
+                endpoints = [line.strip() for line in file if line.strip() and not line.startswith('#')]
+                print_info(f"Loaded endpoints from: {path}")
+                return endpoints
+        except FileNotFoundError:
+            continue
+    
+    # If we get here, no file was found
+    print_error("endpoints.txt not found in any of the expected locations!")
+    print_info("Please run with discovery option enabled first to create the file.")
+    print_info("Or copy endpoints.txt to one of these locations:")
+    for path in possible_paths:
+        print(f"  - {path}")
+    sys.exit(1)
+    
+def test_endpoint(target, endpoint, timeout=10):
     """Test a single endpoint"""
     url = f"{target}{endpoint}"
     start = time.time()
@@ -115,7 +140,7 @@ def test_endpoint(target, endpoint):
 
 
     except requests.exceptions.Timeout:
-        result["error"] = "Timeout after 10 seconds"
+        result["error"] = f"Timeout after {timeout} seconds"
     except requests.exceptions.ConnectionError:
         result["error"] = "Connection refused - is the server running?"
     except requests.exceptions.RequestException as e:
@@ -241,7 +266,7 @@ def discover_endpoints(target, wordlist=None, output_file="endpoints.txt"):
 
                     # Immediatly shows when found
                     status_color = "\033[92m" if response.status_code == 200 else "\033[93m"
-                    print(f"\n  ✅ Encontrado: {endpoint:<30} {status_color}[{response.status_code}]\033[0m")
+                    print(f"\n  ✅ Found: {endpoint:<30} {status_color}[{response.status_code}]\033[0m")
             
             except requests.exceptions.Timeout:
                 # Timeout is expected, just ignore it
@@ -471,7 +496,12 @@ def main():
     print_header("GENERATING REPORT")
 
     try:
-        with open("report.txt", "w") as report:
+        output_dir = Path.cwd() / "output"
+        output_dir.mkdir(exist_ok=True)
+
+        report_path = output_dir / "report.txt"
+
+        with open(report_path, "w", encoding="utf-8") as report:
             report.write("=" * 70 + "\n")
             report.write("                     NX-TRACE SCAN REPORT\n")
             report.write("=" * 70 + "\n\n")
@@ -506,7 +536,7 @@ def main():
                             report.write(f"    {key}: {value}\n")
                 report.write("-" * 40 + "\n")
 
-        print_success("Report saved to report.txt")
+        print_success(f"Report saved to {report_path}")
 
     except Exception as e:
         print_error(f"Failed to write report: {str(e)}")
@@ -515,7 +545,7 @@ def main():
     print("\n" + "=" * 70)
     print("\033[1m\033[95m[👁️] SCAN COMPLETE - NX-TRACE Security Scanner [👁️]\033[0m")
     print("=" * 70)
-    print("\033[90mReport saved to: report.txt\033[0m")
+    print(f"\033[90mReport saved to: {report_path}\033[0m")
 
 if __name__ == "__main__":
     try:

@@ -4,21 +4,45 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nx-trace"
-version = "1.6.2"
-description = "Lightweight REST API Behavioral Analysis Scanner"
+version = "2.0.0"
+description = "REST API Behavioral Analysis Scanner"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "custom"}
+license = {text = "MIT"}
 authors = [
     {name = "João P.Soares"}
 ]
+keywords = ["security", "scanner", "api", "pentesting"]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Security",
+]
+
 dependencies = [
-    "requests",
-    "flask"
+    "requests>=2.28.0",
+    "colorama>=0.4.6",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
 ]
 
 [project.scripts]
-nx-trace = "nx_trace.scanner:main"
+nx-trace = "nx_trace.cli.scanner:main"
 
-[tool.setuptools.package-data]
-nx_trace = ["endpoints.txt"]
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["nx_trace*"]
+
+[tool.black]
+line-length = 100

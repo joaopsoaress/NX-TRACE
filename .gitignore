@@ -4,6 +4,16 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+dist/
+build/
 
 # =========================
 # Packaging / build artifacts
@@ -42,6 +52,8 @@ report.txt
 # =========================
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # =========================
 # OS-specific files

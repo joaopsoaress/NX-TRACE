@@ -203,7 +203,8 @@ def load_endpoints(filepath: str) -> List[str]:
     # Possible locations for endpoints.txt
     possible_paths = [
         filepath,  # Specified file path
-        os.path.join(os.path.dirname(__file__), "../../data/endpoints.txt"),  # Package data
+        os.path.join(os.path.dirname(__file__), "../data/endpoints.txt"),  # Package data
+        os.path.join(os.getcwd(), "src", "nx_trace", "data", "endpoints.txt"),
         os.path.join(os.getcwd(), "endpoints.txt"),  # Current directory
         os.path.join(os.path.dirname(__file__), "endpoints.txt")  # Same as script
     ]
@@ -365,9 +366,19 @@ def process_results(results: List[ScanResult], args):
     
     # Generate report
     if args.output:
-        from nx_trace.core.reporter import Reporter
-        reporter = Reporter(results, args.target, args)
-        reporter.save(args.output)
+        # If user specify a path, uses it
+        output_path = args.output
+    else:
+        # Create output folder if it does not exists
+        output_dir = Path.cwd() / "output"
+        output_dir.mkdir(exist_ok=True)
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_path = output_dir / f"report_{timestamp}.txt"
+    
+    from nx_trace.core.reporter import Reporter
+    reporter = Reporter(results, args.target, args)
+    reporter.save(str(output_path))
 
 def discover_endpoints(target, wordlist=None):
     """Discover endpoints by brute-forcing common paths"""

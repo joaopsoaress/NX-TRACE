@@ -3,27 +3,39 @@
 import os
 import sys
 
+def supports_color():
+    """Check if terminal supports colors"""
+    if os.name == 'nt':  # Windows
+        # Windows 10+ supports ANSI colors
+        return (sys.stdout.isatty() and 
+                os.environ.get('TERM') != 'dumb' and
+                sys.getwindowsversion().major >= 10)
+    else:  # Linux/Mac
+        return sys.stdout.isatty() and os.environ.get('TERM') != 'dumb'
+    
 if sys.platform == "win32":
     import colorama
     colorama.init()
 
-COLORS_SUPPORTED = (
-    hasattr(sys.stdout, 'isatty') and 
-    sys.stdout.isatty() and 
-    os.name != 'nt' or os.environ.get('TERM') == 'xterm-256color'
-)
+if '--no-color' in sys.argv:
+    COLORS_SUPPORTED = False
+else:
+    COLORS_SUPPORTED = supports_color()
 
 class Colors:
     """ANSI color codes"""
-    BLUE = '\033[94m' if COLORS_SUPPORTED else ''
-    GREEN = '\033[92m' if COLORS_SUPPORTED else ''
-    YELLOW = '\033[93m' if COLORS_SUPPORTED else ''
-    RED = '\033[91m' if COLORS_SUPPORTED else ''
-    PURPLE = '\033[95m' if COLORS_SUPPORTED else ''
-    CYAN = '\033[96m' if COLORS_SUPPORTED else ''
-    GRAY = '\033[90m' if COLORS_SUPPORTED else ''
-    BOLD = '\033[1m' if COLORS_SUPPORTED else ''
-    RESET = '\033[0m' if COLORS_SUPPORTED else ''
+    if COLORS_SUPPORTED:
+        BLUE = '\033[94m'
+        GREEN = '\033[92m'
+        YELLOW = '\033[93m'
+        RED = '\033[91m'
+        PURPLE = '\033[95m'
+        CYAN = '\033[96m'
+        GRAY = '\033[90m'
+        BOLD = '\033[1m'
+        RESET = '\033[0m'
+    else:
+        BLUE = GREEN = YELLOW = RED = PURPLE = CYAN = GRAY = BOLD = RESET = ''
 
 def print_banner():
     """Print NX ASCII art banner"""
@@ -37,14 +49,14 @@ def print_banner():
 ║                                  ██║ ╚████║██╔╝ ██╗                                                   ║
 ║                                  ╚═╝  ╚═══╝╚═╝  ╚═╝                                                   ║
 ║                                                                                                       ║
-║                               👁️  N X - T R A C E  👁️                                                ║
+║                               👁️  N X - T R A C E  👁️                                                 ║
 ║                             Network Security Scanner v2.0.0                                           ║
 ║                                                                                                       ║
 ╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝{Colors.RESET}
 """
     print(banner)
 
-# Funções de output
+# output functions 
 def print_success(text):
     print(f"{Colors.GREEN}[✓]{Colors.RESET} {text}")
 

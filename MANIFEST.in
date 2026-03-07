@@ -1,0 +1,2 @@
+include src/nx_trace/data/*.txt
+recursive-include src/nx_trace/data *
